@@ -1,0 +1,27 @@
+CREATE TABLE tools (tool_id INT PRIMARY KEY, manufacturer VARCHAR(255), model VARCHAR(255), serial_number_range VARCHAR(255));
+CREATE TABLE attachments (attachment_id INT PRIMARY KEY, manufacturer VARCHAR(255), model VARCHAR(255), tool_id INT, FOREIGN KEY (tool_id) REFERENCES tools(tool_id));           
+CREATE TABLE diagrams (diagram_id INT PRIMARY KEY, manufacturer VARCHAR(255), description VARCHAR(255), tool_id INT, FOREIGN KEY (tool_id) REFERENCES tools(tool_id));
+CREATE TABLE attachment_diagrams (diagram_id INT PRIMARY KEY, manufacturer VARCHAR(255), description VARCHAR(255), attachment_id INT, FOREIGN KEY (attachment_id) REFERENCES attachments(attachment_id));
+CREATE TABLE components (component_id INT AUTO_INCREMENT PRIMARY KEY, manufacturer VARCHAR(255), sku VARCHAR(255), description VARCHAR(255), diagram_id INT, FOREIGN KEY (diagram_id) REFERENCES diagrams(diagram_id));
+CREATE TABLE attachment_components (component_id INT AUTO_INCREMENT PRIMARY KEY, manufacturer VARCHAR(255), sku VARCHAR(255), description VARCHAR(255), diagram_id INT, FOREIGN KEY (diagram_id) REFERENCES attachment_diagrams(diagram_id));
+
+DROP TABLE attachment_components;
+DROP TABLE components;
+DROP TABLE attachment_diagrams;
+DROP TABLE attachments;
+DROP TABLE diagrams;
+DROP TABLE tools;
+
+DELETE FROM attachment_components;
+DELETE FROM components;
+DELETE FROM attachments;
+DELETE FROM attachment_diagrams;
+DELETE FROM diagrams;
+DELETE FROM tools;
+
+SELECT * FROM tools;
+SELECT * FROM attachments;
+SELECT * FROM attachment_diagrams;
+SELECT * FROM attachment_components;
+SELECT * FROM diagrams;
+SELECT * FROM components;
