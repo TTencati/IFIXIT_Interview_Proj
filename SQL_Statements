@@ -1,22 +1,26 @@
 CREATE TABLE tools (tool_id INT PRIMARY KEY, manufacturer VARCHAR(255), model VARCHAR(255), serial_number_range VARCHAR(255));
 CREATE TABLE attachments (attachment_id INT PRIMARY KEY, manufacturer VARCHAR(255), model VARCHAR(255), tool_id INT, FOREIGN KEY (tool_id) REFERENCES tools(tool_id));           
-CREATE TABLE diagrams (diagram_id INT PRIMARY KEY, manufacturer VARCHAR(255), description VARCHAR(255), tool_id INT, FOREIGN KEY (tool_id) REFERENCES tools(tool_id));
 CREATE TABLE attachment_diagrams (diagram_id INT PRIMARY KEY, manufacturer VARCHAR(255), description VARCHAR(255), attachment_id INT, FOREIGN KEY (attachment_id) REFERENCES attachments(attachment_id));
-CREATE TABLE components (component_id INT AUTO_INCREMENT PRIMARY KEY, manufacturer VARCHAR(255), sku VARCHAR(255), description VARCHAR(255), diagram_id INT, FOREIGN KEY (diagram_id) REFERENCES diagrams(diagram_id));
-CREATE TABLE attachment_components (component_id INT AUTO_INCREMENT PRIMARY KEY, manufacturer VARCHAR(255), sku VARCHAR(255), description VARCHAR(255), diagram_id INT, FOREIGN KEY (diagram_id) REFERENCES attachment_diagrams(diagram_id));
+CREATE TABLE attachment_components (component_id INT AUTO_INCREMENT PRIMARY KEY, manufacturer VARCHAR(255), sku VARCHAR(255), description VARCHAR(255), diagram_id INT);
+CREATE TABLE attachment_diagram_components_map (diagram_id INT, component_id INT, PRIMARY KEY (diagram_id, component_id), FOREIGN KEY (diagram_id) REFERENCES attachment_diagrams(diagram_id), FOREIGN KEY (component_id) REFERENCES attachment_components(component_id));
+CREATE TABLE tool_diagrams (diagram_id INT PRIMARY KEY, manufacturer VARCHAR(255), description VARCHAR(255), tool_id INT, FOREIGN KEY (tool_id) REFERENCES tools(tool_id));
+CREATE TABLE tool_components (component_id INT AUTO_INCREMENT PRIMARY KEY, manufacturer VARCHAR(255), sku VARCHAR(255), description VARCHAR(255), diagram_id INT);
+CREATE TABLE tool_diagram_component_map (diagram_id INT, component_id INT, PRIMARY KEY (diagram_id, component_id), FOREIGN KEY (diagram_id) REFERENCES tool_diagrams(diagram_id), FOREIGN KEY (component_id) REFERENCES tool_components(component_id));
 
+DROP TABLE attachment_diagram_components_map;
+DROP TABLE tool_diagram_component_map;
 DROP TABLE attachment_components;
-DROP TABLE components;
+DROP TABLE tool_components;
+DROP TABLE tool_diagrams;
 DROP TABLE attachment_diagrams;
 DROP TABLE attachments;
-DROP TABLE diagrams;
 DROP TABLE tools;
 
 DELETE FROM attachment_components;
-DELETE FROM components;
 DELETE FROM attachments;
 DELETE FROM attachment_diagrams;
-DELETE FROM diagrams;
+DELETE FROM tool_components;
+DELETE FROM tool_diagrams;
 DELETE FROM tools;
 
 SELECT * FROM tools;
@@ -25,3 +29,17 @@ SELECT * FROM attachment_diagrams;
 SELECT * FROM attachment_components;
 SELECT * FROM diagrams;
 SELECT * FROM components;
+
+DROP TABLE attachment_components;
+DROP TABLE tool_components;
+DROP TABLE tool_diagrams;
+DROP TABLE attachment_diagrams;
+DROP TABLE attachments;
+DROP TABLE tools;
+
+CREATE TABLE tools (tool_id INT PRIMARY KEY, manufacturer VARCHAR(255), model VARCHAR(255), serial_number_range VARCHAR(255));
+CREATE TABLE attachments (attachment_id INT PRIMARY KEY, manufacturer VARCHAR(255), model VARCHAR(255), tool_id INT, FOREIGN KEY (tool_id) REFERENCES tools(tool_id));           
+CREATE TABLE attachment_diagrams (diagram_id INT PRIMARY KEY, attachment_id INT, manufacturer VARCHAR(255), description VARCHAR(255), FOREIGN KEY (attachment_id) REFERENCES attachments(attachment_id));
+CREATE TABLE attachment_components (component_id INT AUTO_INCREMENT PRIMARY KEY, diagram_id INT, manufacturer VARCHAR(255), sku VARCHAR(255), description VARCHAR(255), FOREIGN KEY (diagram_id) REFERENCES attachment_diagrams(diagram_id));
+CREATE TABLE tool_diagrams (diagram_id INT PRIMARY KEY, tool_id INT, manufacturer VARCHAR(255), description VARCHAR(255), FOREIGN KEY (tool_id) REFERENCES tools(tool_id));
+CREATE TABLE tool_components (component_id INT AUTO_INCREMENT PRIMARY KEY, diagram_id INT, manufacturer VARCHAR(255), sku VARCHAR(255), description VARCHAR(255), FOREIGN KEY (diagram_id) REFERENCES tool_diagrams(diagram_id));
